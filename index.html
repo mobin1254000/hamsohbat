@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>هم‌صحبت | پیام‌رسان آنلاین و گفت‌وگوی فوری</title>
+  <meta name="description" content="هم‌صحبت - پیام‌رسان هوشمند، امن و بلادرنگ برای گفت‌وگوی دوستانه و کاری">
+  <!-- فونت وزیرمتن فارسی از CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app" class="app-root">
+    
+    <!-- لایه احراز هویت (ورود / ثبت‌نام) -->
+    <div id="authSection" class="auth-wrapper">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <h1>هم‌صحبت</h1>
+          <p class="brand-tagline">ارتباطی صمیمی، سریع و بی‌درنگ</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button id="tabLoginBtn" class="tab-btn active" type="button">ورود به حساب</button>
+          <button id="tabRegisterBtn" class="tab-btn" type="button">ثبت‌نام جدید</button>
+        </div>
+
+        <div id="authAlert" class="auth-alert hidden"></div>
+
+        <!-- فرم ورود -->
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label for="loginUsername">نام کاربری</label>
+            <input type="text" id="loginUsername" placeholder="مثال: ali_reza" required autocomplete="username" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">رمز عبور</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" dir="ltr">
+          </div>
+          <button type="submit" class="btn-primary" id="loginSubmitBtn">
+            <span>ورود به هم‌صحبت</span>
+          </button>
+        </form>
+
+        <!-- فرم ثبت‌نام -->
+        <form id="registerForm" class="auth-form hidden">
+          <div class="form-group">
+            <label for="regDisplayName">نام و نام خانوادگی (نمایشی)</label>
+            <input type="text" id="regDisplayName" placeholder="مثال: علی رضایی" required>
+          </div>
+          <div class="form-group">
+            <label for="regUsername">نام کاربری (حروف انگلیسی و عدد)</label>
+            <input type="text" id="regUsername" placeholder="مثال: ali_reza" required autocomplete="username" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label for="regPassword">رمز عبور (حداقل ۶ کاراکتر)</label>
+            <input type="password" id="regPassword" placeholder="••••••••" required autocomplete="new-password" dir="ltr">
+          </div>
+          <button type="submit" class="btn-primary" id="regSubmitBtn">
+            <span>ایجاد حساب کاربری</span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <span>امنیت رمزنگاری شده با JWT و Bcrypt</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- محیط اصلی چت (پس از لاگین) -->
+    <div id="chatSection" class="chat-layout hidden">
+      
+      <!-- نوار کناری (لیست کاربران) -->
+      <aside id="sidebar" class="chat-sidebar">
+        <header class="sidebar-header">
+          <div class="user-profile-badge">
+            <div class="avatar my-avatar" id="myAvatarLetter">م</div>
+            <div class="profile-info">
+              <span class="profile-name" id="myDisplayName">کاربر هم‌صحبت</span>
+              <span class="profile-handle" id="myUsername">@username</span>
+            </div>
+          </div>
+          <button id="logoutBtn" class="icon-btn" title="خروج از حساب" aria-label="خروج">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </header>
+
+        <div class="sidebar-search">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="userSearchInput" placeholder="جست‌وجوی مخاطب...">
+          </div>
+        </div>
+
+        <div class="sidebar-title">
+          <span>گفت‌وگوها و مخاطبان</span>
+          <span class="users-count" id="usersCountBadge">۰</span>
+        </div>
+
+        <div id="usersList" class="users-list">
+          <div class="empty-state-small">در حال دریافت لیست مخاطبان...</div>
+        </div>
+      </aside>
+
+      <!-- بخش اصلی گفت‌وگو -->
+      <main id="chatMain" class="chat-main">
+        
+        <!-- حالت وقتی مخاطبی انتخاب نشده -->
+        <div id="emptyChatView" class="empty-chat-state">
+          <div class="empty-illustration">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+          </div>
+          <h2>به «هم‌صحبت» خوش آمدید!</h2>
+          <p>یک مخاطب را از لیست سمت راست انتخاب کنید تا گفت‌وگوی زنده شروع شود.</p>
+        </div>
+
+        <!-- صفحه چت فعال -->
+        <div id="activeChatView" class="active-chat-wrapper hidden">
+          
+          <header class="chat-header">
+            <div class="chat-header-info">
+              <button id="backToListBtn" class="icon-btn mobile-only" title="بازگشت">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+              <div class="avatar" id="activeUserAvatar">؟</div>
+              <div class="chat-target-meta">
+                <h3 id="activeUserName">نام مخاطب</h3>
+                <div class="chat-target-status" id="activeUserStatusText">
+                  <span class="status-dot offline" id="activeStatusDot"></span>
+                  <span id="activeStatusLabel">آفلاین</span>
+                </div>
+              </div>
+            </div>
+            <div class="header-badges">
+              <span class="badge-tag">چت اختصاصی امن</span>
+            </div>
+          </header>
+
+          <div id="messagesContainer" class="messages-container">
+            <!-- پیام‌ها به صورت پویا با جاوااسکریپت و ایمن اضافه می‌شوند -->
+          </div>
+
+          <div id="typingIndicator" class="typing-indicator hidden">
+            <span class="typing-dots">
+              <span></span><span></span><span></span>
+            </span>
+            <span id="typingIndicatorText">در حال نوشتن...</span>
+          </div>
+
+          <form id="messageForm" class="chat-input-bar">
+            <textarea 
+              id="messageInput" 
+              placeholder="پیام خود را بنویسید... (Enter برای ارسال، Shift+Enter برای خط جدید)" 
+              rows="1" 
+              maxlength="2000"
+              required></textarea>
+            <button type="submit" id="sendBtn" class="send-btn" title="ارسال پیام" aria-label="ارسال">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
+
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- کتابخانه Socket.IO کلاینت -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
